@@ -1,7 +1,7 @@
 var cellSize = fm.config.cellSize;
 
 class Item{
-    constructor(pos, width, height, importance)
+    constructor(pos, width, height, importance, childRepresented)
     {
         if (typeof Item.counter === 'undefined')
         Item.counter = 0;
@@ -10,6 +10,7 @@ class Item{
         this.width = width * cellSize;
         this.height = height * cellSize;
         this.importance = importance;
+        this.childRepresented = childRepresented;
         
         this.pos = pos.multiply(cellSize);
     }
@@ -19,7 +20,7 @@ class Item{
     
         this.outer.on('mousedrag', function (event) { 
             console.log('drag event')
-            self.moveMe(event.delta)
+            //self.moveMe(event.delta);
         })
     
         this.outer.on('mousedown', function (event){
@@ -34,6 +35,7 @@ class Item{
     moveMe(delta){
         this.outer.position = this.outer.position.add(delta);
         this.outer.bringToFront();
+        this.childRepre
     }
     
     draw() { // width, height, content

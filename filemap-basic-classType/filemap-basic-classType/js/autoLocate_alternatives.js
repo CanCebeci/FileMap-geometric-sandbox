@@ -457,14 +457,74 @@ function randn_bm() {
     return Math.abs(num - 0.5);
 }
 
+var canvas;
+let indicator;
+let indicatorPath; 
+let tool = new paper.Tool();
 
 function visualizeSolution(x, y, width, height, children) {
     //console.log(children);
-    var canvas = paper.Path.Rectangle(x * cellSize, y * cellSize, width * cellSize, height * cellSize);
+    canvas = paper.Path.Rectangle(x * cellSize, y * cellSize, width * cellSize, height * cellSize);
     canvas.fillColor = new paper.Color(0.8);
     canvas.opacity = 1;
     canvas.strokeColor = "black";
     canvas.strokeWidth = 2;
+
+    canvas.onMouseDown = function(event) {
+        drawIndicator(event);
+    }
+
+    canvas.onMouseDrag = function(event) {
+        resizeIndicator(event);
+    }
+
+    canvas.onMouseUp = function(event) {
+        addChild();
+    }
+
+    function withinBounds(event) {
+        return(event.point.x >= 10 * cellSize && event.point.x <= 10 * cellSize + width * cellSize
+            && event.point.y >= 10 * cellSize && event.point.y <= 10 * cellSize + height * cellSize);
+    }
+
+    function drawIndicator(event) {
+        indicator = new paper.Rectangle(new paper.Point(Math.floor(event.point.x / cellSize) * cellSize , Math.floor(event.point.y / cellSize) * cellSize), new paper.Size(cellSize,cellSize));
+        indicatorPath = new paper.Path.Rectangle(indicator);
+        indicatorPath.strokeColor = "green";
+        indicatorPath.strokeWidth = 6;
+    }
+
+    function resizeIndicator(event) {
+        let rm = false;
+        if (2 * indicator.width <= (event.point.x - indicator.left)) {
+            indicator.width *= 2; 
+            rm = true;
+        }
+        if (2 * indicator.height <= (event.point.y - indicator.top)) {
+            indicator.height *= 2;
+            rm = true;
+        }
+        if (rm) {
+            indicatorPath.remove();
+            indicatorPath = new paper.Path.Rectangle(indicator);
+            indicatorPath.strokeColor = "green";
+            indicatorPath.strokeWidth = 6;
+        }
+    }
+
+    function addChild() {
+        let newChild = new RectItem(
+            Math.floor((indicator.left) / cellSize) - 10,
+            Math.floor((indicator.right) / cellSize) - 10 ,
+            Math.floor((indicator.top) / cellSize) - 10 ,
+            Math.floor((indicator.bottom) / cellSize ) - 10);
+
+        children[children.length] = newChild;
+
+        divideChunks(newChild, width, height);
+        console.log("#chunks: " + freeChunks.length);
+        visualizeSolution(10, 10, width, height, children);
+    }
 
     for (var i = 0; i < children.length; i++) {
         var item = new Item(new paper.Point(children[i].location).add(new paper.Point(x, y)), children[i].size.width, children[i].size.height, children[i].importance);
@@ -478,6 +538,11 @@ function visualizeSolution(x, y, width, height, children) {
         let fc = freeChunks[i];
         var ind = paper.Path.Rectangle((x + fc.location.x )* cellSize, (y + fc.location.y) * cellSize, fc.size.width * cellSize, fc.size.height * cellSize);
         ind.strokeColor = "red";
+        ind.onMouseDown = canvas.onMouseDown;
+        ind.onMouseDrag = canvas.onMouseDrag;
+        ind.onMouseUp = canvas.onMouseUp;
+        
+
         let label = new paper.PointText({
             content: "["+i+"]\n",
             fontSize: 15,
