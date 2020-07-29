@@ -20,26 +20,23 @@ jQuery(window).load(function() {
     freeHeap.push(freeChunks[0]);
 
     children = [];
-    //visualizeSolution(10, 10, width, height, freeChunks);
+    visualizeSolution(10, 10, width, height, children);
 
     let indicator;
     let indicatorPath;
 
     var newChildren = [];
 
+    tool = new paper.Tool();
 
-    var canvas = paper.Path.Rectangle(10 * cellSize, 10 * cellSize, width * cellSize, height * cellSize);
-    canvas.fillColor = "grey";
-    canvas.opacity = 0.3;
-    canvas.strokeColor = "black";
-    canvas.strokeWidth = 2;
-    canvas.onMouseDown = function(event) {
+    tool.onMouseDown = function(event) {
         indicator = new paper.Rectangle(new paper.Point(Math.floor(event.point.x / cellSize) * cellSize , Math.floor(event.point.y / cellSize) * cellSize), new paper.Size(cellSize,cellSize));
         indicatorPath = new paper.Path.Rectangle(indicator);
         indicatorPath.strokeColor = "green";
         indicatorPath.strokeWidth = 6;
     }
-    canvas.onMouseDrag = function(event) {
+
+    tool.onMouseDrag = function(event) {
         let rm = false;
         if (2 * indicator.width <= (event.point.x - indicator.left)) {
             indicator.width *= 2; 
@@ -58,7 +55,7 @@ jQuery(window).load(function() {
         
     }
 
-    canvas.onMouseUp = function(event) {
+    tool.onMouseUp = function(event) {
         let newChild = new RectItem(
             Math.floor((indicator.left) / cellSize) - 10,
             Math.floor((indicator.right) / cellSize) - 10 ,
@@ -70,7 +67,6 @@ jQuery(window).load(function() {
         divideChunks(newChild, width, height);
         console.log("#chunks: " + freeChunks.length);
         visualizeSolution(10, 10, width, height, children);
-        canvas.bringToFront();
     }
 
 
