@@ -19,7 +19,7 @@ class Item{
         var self = this;
     
         this.outer.on('mousedrag', function (event) { 
-            console.log('drag event')
+            console.log('drag event');
             //self.moveMe(event.delta);
         })
     

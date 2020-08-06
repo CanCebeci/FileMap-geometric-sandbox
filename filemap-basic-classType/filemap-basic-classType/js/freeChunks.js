@@ -1,3 +1,5 @@
+let freeChunks, freeHeap;
+
 // these functions can be instance methods of Item (replace "r1" with "this")
 function collides (r1, r2) {
     let collideInX = !(r1.x2() <= r2.x1() || r2.x2() <= r1.x1());
@@ -250,4 +252,16 @@ function mergeChunks(c1, c2, direction) {
 
         return l1;
     }
+}
+
+function computeFreeHeap() {
+    freeChunks = [new RectItem(0, width, 0, height)];
+    freeHeap = new BinaryHeap();
+    freeHeap.push(freeChunks[0]);
+
+    children.forEach(child => {
+        divideChunks(child);
+    });
+    console.log(freeHeap);
+    return freeHeap;
 }

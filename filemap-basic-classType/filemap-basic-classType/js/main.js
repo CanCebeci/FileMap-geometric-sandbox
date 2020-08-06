@@ -1,23 +1,14 @@
 const width = 60
 const height = 60;
 
-let freeChunks; 
 let children;
-let freeHeap;
 
 
 // set fm up on window load
 jQuery(window).load(function() {
-    
-    freeChunks = [new RectItem(0, width, 0, height)];
-    freeHeap = new BinaryHeap();
-    freeHeap.push(freeChunks[0]);
-
+    freeChunks = [];
     children = [];
     visualizeSolution(10, 10, width, height, children); // Draw the background.
-
-    let indicator;
-    let indicatorPath; 
 
     var newChildren = [];       // A list of of children to be added. Used by button 4.
 
@@ -109,8 +100,6 @@ jQuery(window).load(function() {
             visualizeSolution(10, 10, width, height, children);
             newChildren = [];
             label1.content = label2.content = label3.content = 0;
-            canvas.bringToFront();
-
         }
     }
 });
